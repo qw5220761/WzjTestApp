@@ -7,6 +7,13 @@ import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.example.drop.wzjtestapp.R;
+import com.example.drop.wzjtestapp.utils.LogUtil;
+
+import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.PtrUIHandler;
+import in.srain.cube.views.ptr.indicator.PtrIndicator;
+
 public class PtrAnimationBackgroundHeader extends FrameLayout implements PtrUIHandler {
 
     private final static String TAG = PtrAnimationBackgroundHeader.class.getSimpleName();

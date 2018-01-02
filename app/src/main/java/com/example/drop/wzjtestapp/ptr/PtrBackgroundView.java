@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.example.drop.wzjtestapp.R;
+
 
 public class PtrBackgroundView extends View {
 
