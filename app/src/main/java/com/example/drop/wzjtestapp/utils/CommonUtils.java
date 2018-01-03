@@ -32,8 +32,8 @@ import android.widget.Toast;
 import com.example.drop.wzjtestapp.BaseActivity;
 import com.example.drop.wzjtestapp.MyApplication;
 import com.example.drop.wzjtestapp.R;
-import com.example.drop.wzjtestapp.dialog.DialogCallback;
-import com.example.drop.wzjtestapp.dialog.TextDialog;
+import com.example.drop.wzjtestapp.views.dialog.DialogCallback;
+import com.example.drop.wzjtestapp.views.dialog.TextDialog;
 
 import java.io.File;
 import java.io.IOException;

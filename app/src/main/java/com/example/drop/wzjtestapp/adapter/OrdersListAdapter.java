@@ -8,6 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.drop.wzjtestapp.R;
+import com.example.drop.wzjtestapp.database.bean.TestData;
+import com.example.drop.wzjtestapp.utils.ArrayUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 

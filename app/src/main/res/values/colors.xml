@@ -7,4 +7,5 @@
     <color name="primary_color">#ED145B</color>
     <color name="text_color">#505559</color>
     <color name="base_tab_bar_divider">#e2e2e2</color>
+    <color name="base_bg">#F6F6F6</color>
 </resources>

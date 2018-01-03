@@ -29,6 +29,7 @@ dependencies {
     compile 'com.alibaba:fastjson:1.1.56.android'
     compile 'org.greenrobot:greendao-generator:3.2.0'
     compile 'org.greenrobot:greendao:3.2.0'
+    compile 'com.facebook.fresco:fresco:1.1.0'
     testCompile 'junit:junit:4.12'
     compile project(path: ':ptr-lib')
     compile 'com.android.support:design:26.0.0-alpha1'

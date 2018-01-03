@@ -19,5 +19,9 @@
         <item name="android:layout_height">0.5dp</item>
         <item name="android:background">@color/base_tab_bar_divider</item>
     </style>
+    <style name="normalText">
+        <item name="android:textColor">@color/text_color</item>
+        <item name="android:textSize">14sp</item>
+    </style>
 
 </resources>

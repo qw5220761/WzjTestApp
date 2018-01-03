@@ -3,10 +3,9 @@ package com.example.drop.wzjtestapp.adapter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.gongyouh.charman.recycler.wrapper.EmptyWrapper;
-import com.gongyouh.charman.recycler.wrapper.HeaderAndFooterWrapper;
-import com.gongyouh.charman.recycler.wrapper.LoadMoreWrapper;
-
+import com.example.drop.wzjtestapp.views.recycler.wrapper.EmptyWrapper;
+import com.example.drop.wzjtestapp.views.recycler.wrapper.HeaderAndFooterWrapper;
+import com.example.drop.wzjtestapp.views.recycler.wrapper.LoadMoreWrapper;
 
 /**
  * Created by liang_xs on 2017/11/28.
