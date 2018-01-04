@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/base_bg"
-    android:descendantFocusability="beforeDescendants"
-    android:orientation="vertical">
+              xmlns:fresco="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:background="@color/base_bg"
+              android:descendantFocusability="beforeDescendants"
+              android:orientation="vertical">
 
     <TextView
         android:id="@+id/tvListName"
         style="@style/normalText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="测试" />
+        tools:text="测试"/>
 
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/ivListPic"
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="100dp"
+        />
 
 
 </LinearLayout>

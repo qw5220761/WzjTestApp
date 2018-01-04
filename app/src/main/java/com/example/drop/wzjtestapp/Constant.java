@@ -71,7 +71,7 @@ public class Constant {
         }
     }
 
-    private static boolean isDebug(Context context) {
+    public static boolean isDebug(Context context) {
         try {
             ApplicationInfo info = context.getApplicationInfo();
             return (info.flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;

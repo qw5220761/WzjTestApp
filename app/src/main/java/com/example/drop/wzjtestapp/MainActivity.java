@@ -15,6 +15,8 @@ import com.example.drop.wzjtestapp.i.AppBarStateChangeListener;
 import com.example.drop.wzjtestapp.utils.LogUtil;
 import com.example.drop.wzjtestapp.views.ptr.PtrDefaultFrameLayout;
 import com.example.drop.wzjtestapp.views.recycler.wrapper.LoadMoreWrapper;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
 
@@ -22,7 +24,8 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoadMoreListener {
+public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoadMoreListener,
+            OrdersListAdapter.OnItemClickListener{
     private RecyclerView recyclerView;
     private OrdersListAdapter adapter;
     private AppBarLayout appBarLayout;
@@ -30,9 +33,11 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
     private View loadMoreLayout;
     private boolean expand = false;
     private RadioGroup radioGroup;
+    private SimpleDraweeView userScroreRe;
     @Override
     public void initParams(Bundle params) {
 
+        Fresco.initialize(this);
     }
 
     @Override
@@ -45,6 +50,7 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         recyclerView = find(R.id.recyclerView);
         appBarLayout = find(R.id.appBarLayout);
         radioGroup = find(R.id.radioGroup);
+        userScroreRe = find(R.id.userScroreRe);
         ptrFrameLayout = find(R.id.ptrFrameLayout);
         ptrFrameLayout.buildPtr(new PtrHandler() {
 
@@ -82,6 +88,7 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         recyclerView.setAdapter(adapter.getWrapperAdapter());
         loadMoreLayout = LayoutInflater.from(this).inflate(R.layout.load_layout, recyclerView, false);
         adapter.setOnLoadMoreListener(this);
+//        adapter.setOnItemClickListener();
         appBarLayout.addOnOffsetChangedListener(new AppBarStateChangeListener() {
             @Override
             public void onStateChanged(AppBarLayout appBarLayout, State state) {
@@ -110,9 +117,15 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
     @Override
     public void initData(Context mContext) {
         ArrayList<TestData> list = new ArrayList<>();
-        for(int i = 0; i < 20; i++) {
+        TestData dataOilDrum = new TestData();
+        dataOilDrum.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        dataOilDrum.setName("油桶动画效果");
+        dataOilDrum.setTitle("dataOilDrum");
+        list.add(dataOilDrum);
+        for(int i = 0; i < 10; i++) {
             TestData data1 = new TestData();
-            data1.setImage("http://tva4.sinaimg.cn/crop.0.0.640.640.1024/9632347bjw8f01xh8w9dkj20hs0hsaah.jpg");
+            data1.setTitle("");
+            data1.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
             data1.setName("测试");
             list.add(data1);
         }
@@ -131,5 +144,9 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
     @Override
     public void onLoadMoreRequested() {
         showToast("加载更多");
+    }
+
+    @Override
+    public void onItemClick() {
     }
 }

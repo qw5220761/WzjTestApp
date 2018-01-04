@@ -22,7 +22,7 @@ public final class LogUtil {
     }
 
 
-    public static void i(Object... objects) {
+    public static void iSimple(Object... objects) {
         if (isLoggable(INFO)) {
             android.util.Log.i(TAG, toString(objects));
         }
