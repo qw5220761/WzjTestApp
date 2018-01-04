@@ -122,6 +122,11 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         dataOilDrum.setName("油桶动画效果");
         dataOilDrum.setTitle("dataOilDrum");
         list.add(dataOilDrum);
+        TestData dataDatePicker = new TestData();
+        dataDatePicker.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        dataDatePicker.setName("日历选择器");
+        dataDatePicker.setTitle("DatePicker");
+        list.add(dataDatePicker);
         for(int i = 0; i < 10; i++) {
             TestData data1 = new TestData();
             data1.setTitle("");

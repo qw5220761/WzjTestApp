@@ -1,6 +1,7 @@
 package com.example.drop.wzjtestapp.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import com.example.drop.wzjtestapp.R;
 import com.example.drop.wzjtestapp.database.bean.TestData;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
 import com.example.drop.wzjtestapp.utils.LogUtil;
+import com.example.drop.wzjtestapp.views.calendar.DatePickerActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -83,6 +85,9 @@ public class OrdersListAdapter extends CommonWrapper<OrdersListAdapter.OrdersLis
             public void onClick(View v) {
                 if(bean.getTitle().equals("dataOilDrum")){
                     LogUtil.iSimple("----dataOilDrum-----"+position);
+                }
+                if(bean.getTitle().equals("DatePicker")){
+                    mContext.startActivity(new Intent(mContext,DatePickerActivity.class));
                 }
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick();
