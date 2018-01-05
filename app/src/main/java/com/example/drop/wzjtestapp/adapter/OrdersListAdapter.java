@@ -18,6 +18,7 @@ import com.example.drop.wzjtestapp.database.bean.TestData;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
 import com.example.drop.wzjtestapp.utils.LogUtil;
 import com.example.drop.wzjtestapp.views.calendar.DatePickerActivity;
+import com.example.drop.wzjtestapp.views.other.WaveViewActivity;
 import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.util.ArrayList;
@@ -83,8 +84,8 @@ public class OrdersListAdapter extends CommonWrapper<OrdersListAdapter.OrdersLis
         viewHolder.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bean.getTitle().equals("dataOilDrum")){
-                    LogUtil.iSimple("----dataOilDrum-----"+position);
+                if(bean.getTitle().equals("waveView")){
+                    mContext.startActivity(new Intent(mContext,WaveViewActivity.class));
                 }
                 if(bean.getTitle().equals("DatePicker")){
                     mContext.startActivity(new Intent(mContext,DatePickerActivity.class));

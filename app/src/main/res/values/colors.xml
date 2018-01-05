@@ -8,4 +8,7 @@
     <color name="text_color">#505559</color>
     <color name="base_tab_bar_divider">#e2e2e2</color>
     <color name="base_bg">#F6F6F6</color>
+    <color name="red">#f16d7a</color>
+    <color name="green">#b7d28d</color>
+    <color name="blue">#b8f1ed</color>
 </resources>

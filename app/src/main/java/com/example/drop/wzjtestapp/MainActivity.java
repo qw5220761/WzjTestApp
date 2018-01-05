@@ -120,7 +120,7 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         TestData dataOilDrum = new TestData();
         dataOilDrum.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
         dataOilDrum.setName("油桶动画效果");
-        dataOilDrum.setTitle("dataOilDrum");
+        dataOilDrum.setTitle("waveView");
         list.add(dataOilDrum);
         TestData dataDatePicker = new TestData();
         dataDatePicker.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
