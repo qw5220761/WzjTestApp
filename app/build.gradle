@@ -34,16 +34,16 @@ dependencies {
     })
 
     compile project(path: ':ptr-lib')
-    //日历选择器
-    //波浪
+
+
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:multidex:1.0.0'
     compile 'com.alibaba:fastjson:1.1.56.android'
     compile 'org.greenrobot:greendao-generator:3.2.0'
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'com.facebook.fresco:fresco:1.1.0'
-    compile 'cn.aigestudio.datepicker:DatePicker:2.2.0'
-    compile 'com.gelitenight.waveview:waveview:1.0.0'
+    compile 'cn.aigestudio.datepicker:DatePicker:2.2.0'//日历选择器
+    compile 'com.gelitenight.waveview:waveview:1.0.0'//波浪
     compile 'com.android.support:design:26.0.0-alpha1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
