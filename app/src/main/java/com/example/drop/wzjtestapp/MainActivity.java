@@ -120,20 +120,23 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         TestData dataOilDrum = new TestData();
         dataOilDrum.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
         dataOilDrum.setName("油桶动画效果");
-        dataOilDrum.setTitle("waveView");
+        dataOilDrum.setTitle(Constant.WAVE_VIEW);
         list.add(dataOilDrum);
         TestData dataDatePicker = new TestData();
         dataDatePicker.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
         dataDatePicker.setName("日历选择器");
-        dataDatePicker.setTitle("DatePicker");
+        dataDatePicker.setTitle(Constant.DATE_PICKER);
         list.add(dataDatePicker);
-        for(int i = 0; i < 10; i++) {
-            TestData data1 = new TestData();
-            data1.setTitle("");
-            data1.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
-            data1.setName("测试");
-            list.add(data1);
-        }
+        TestData guidePage = new TestData();
+        guidePage.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        guidePage.setName("引导页");
+        guidePage.setTitle(Constant.GUIDE_PAGE);
+        list.add(guidePage);
+        TestData mediaToMp4Gif = new TestData();
+        mediaToMp4Gif.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        mediaToMp4Gif.setName("加载gif或者MP4");
+        mediaToMp4Gif.setTitle(Constant.MEDIA_MP4_GIF);
+        list.add(mediaToMp4Gif);
         adapter.setData(list);
     }
 

@@ -46,6 +46,11 @@ public class Constant {
     public static final String EXTRA_USER_ID = "extra_user_id";
     public static final String EXTRA_MAP = "push_message_extra_map";
     public static final String EXTRA_MAIN_GO_TO_KEY = "extra_main_jump";
+    public static final String WAVE_VIEW = "waveView";
+    public static final String DATE_PICKER = "DatePicker";
+    public static final String GUIDE_PAGE = "guidePage";
+    public static final String MEDIA_MP4_GIF = "mediaToMp4Gif";
+
 
     public final static int RESPONSE_SUCCESS_CODE = 100;
     public final static String MAIN_GO_TO_IM = "IM";

@@ -15,6 +15,8 @@ import com.example.drop.wzjtestapp.Constant;
 import com.example.drop.wzjtestapp.MyApplication;
 import com.example.drop.wzjtestapp.R;
 import com.example.drop.wzjtestapp.database.bean.TestData;
+import com.example.drop.wzjtestapp.guide_page.GuidePageActivity;
+import com.example.drop.wzjtestapp.mediaplayer.GifOrMp4PlayerActivity;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
 import com.example.drop.wzjtestapp.utils.LogUtil;
 import com.example.drop.wzjtestapp.views.calendar.DatePickerActivity;
@@ -84,11 +86,17 @@ public class OrdersListAdapter extends CommonWrapper<OrdersListAdapter.OrdersLis
         viewHolder.item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(bean.getTitle().equals("waveView")){
+                if(bean.getTitle().equals(Constant.WAVE_VIEW)){
                     mContext.startActivity(new Intent(mContext,WaveViewActivity.class));
                 }
-                if(bean.getTitle().equals("DatePicker")){
+                if(bean.getTitle().equals(Constant.DATE_PICKER)){
                     mContext.startActivity(new Intent(mContext,DatePickerActivity.class));
+                }
+                if(bean.getTitle().equals(Constant.GUIDE_PAGE)){
+                    mContext.startActivity(new Intent(mContext,GuidePageActivity.class));
+                }
+                if(bean.getTitle().equals(Constant.MEDIA_MP4_GIF)){
+                    mContext.startActivity(new Intent(mContext,GifOrMp4PlayerActivity.class));
                 }
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick();

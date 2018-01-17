@@ -20,7 +20,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".views.calendar.DatePickerActivity" />
-        <activity android:name=".views.other.WaveViewActivity"></activity>
+        <activity android:name=".views.other.WaveViewActivity" />
+        <activity android:name=".guide_page.GuidePageActivity" />
+        <activity android:name=".mediaplayer.GifOrMp4PlayerActivity"></activity>
     </application>
 
 </manifest>
