@@ -13,16 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".views.calendar.DatePickerActivity" />
+        <activity android:name=".views.other.WaveViewActivity" />
+        <activity android:name=".guide_page.GuidePageActivity" />
+        <activity android:name=".mediaplayer.GifOrMp4PlayerActivity" />
+        <activity android:name=".temp.OneDimensionMap">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.calendar.DatePickerActivity" />
-        <activity android:name=".views.other.WaveViewActivity" />
-        <activity android:name=".guide_page.GuidePageActivity" />
-        <activity android:name=".mediaplayer.GifOrMp4PlayerActivity"></activity>
     </application>
 
 </manifest>

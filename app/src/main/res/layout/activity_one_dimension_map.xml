@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".temp.OneDimensionMap">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclePosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
+    <ScrollView
+        android:id="@+id/scrollMap"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content">
+
+        <HorizontalScrollView
+            android:layout_width="300dp"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/layoutMap"
+                android:layout_width="1000dp"
+                android:layout_height="100dp"
+                android:background="@drawable/bg_one_dimension_border">
+
+                <TextView
+                    android:id="@+id/tvDriverMe"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_centerVertical="true"
+                    android:background="@color/blue" />
+
+                <TextView
+                    android:id="@+id/tvDriver1"
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_centerVertical="true"
+                    android:background="@color/red" />
+            </RelativeLayout>
+        </HorizontalScrollView>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnMoveTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="向前" />
+    <Button
+        android:id="@+id/btnMoveBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="向后" />
+</LinearLayout>

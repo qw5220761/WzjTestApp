@@ -137,6 +137,11 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         mediaToMp4Gif.setName("加载gif或者MP4");
         mediaToMp4Gif.setTitle(Constant.MEDIA_MP4_GIF);
         list.add(mediaToMp4Gif);
+        TestData oneDimensionMap = new TestData();
+        mediaToMp4Gif.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        mediaToMp4Gif.setName("一维地图");
+        mediaToMp4Gif.setTitle(Constant.ONE_DIMENSION_MAP);
+        list.add(oneDimensionMap);
         adapter.setData(list);
     }
 
