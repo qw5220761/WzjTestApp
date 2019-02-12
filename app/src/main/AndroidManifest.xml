@@ -20,6 +20,8 @@
         <activity android:name=".guide_page.GuidePageActivity" />
         <activity android:name=".mediaplayer.GifOrMp4PlayerActivity" />
         <activity android:name=".temp.OneDimensionMap">
+        </activity>
+        <activity android:name=".temp.OneDimensionMap_Static">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
