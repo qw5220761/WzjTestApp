@@ -62,6 +62,16 @@ public class PointView extends View {
 //        super.onDraw(canvas);
 
         switch (viewType) {
+            case -1://不是站点得点
+                // 设置样式-填充
+                mTextViewPaint.setStyle(Paint.Style.FILL);
+                //5.绘制画布大小颜色
+                mTextViewPaint.setColor(Color.WHITE);
+                canvas.translate(dip2px(1), dip2px(1));
+                //float left, float top, float right, float bottom, Paint paint
+                //参数设置参考本人博客:http://blog.csdn.net/e_inch_photo/article/details/60978088
+                canvas.drawRect(new Rect(0, 0, dip2px(8), dip2px(8)), mTextViewPaint);//画布大小,onMeasure中测量大小
+                break;
             case 0://默认的点
                 // 设置样式-填充
                 mTextViewPaint.setStyle(Paint.Style.FILL);
@@ -74,6 +84,7 @@ public class PointView extends View {
                 break;
             case 1://显示人和车
                 break;
+
             case 2://站点
                 // 设置样式-填充
                 mTextViewPaint.setStyle(Paint.Style.FILL);
@@ -84,6 +95,16 @@ public class PointView extends View {
                 //参数设置参考本人博客:http://blog.csdn.net/e_inch_photo/article/details/60978088
                 canvas.drawRect(new Rect(0, 0, dip2px(8), dip2px(8)), mTextViewPaint);//画布大小,onMeasure中测量大小
 
+                break;
+            case 3://显示当前车主
+                // 设置样式-填充
+                mTextViewPaint.setStyle(Paint.Style.FILL);
+                //5.绘制画布大小颜色
+                mTextViewPaint.setColor(Color.GREEN);
+                canvas.translate(dip2px(1), dip2px(1));
+                //float left, float top, float right, float bottom, Paint paint
+                //参数设置参考本人博客:http://blog.csdn.net/e_inch_photo/article/details/60978088
+                canvas.drawRect(new Rect(0, 0, dip2px(8), dip2px(8)), mTextViewPaint);//画布大小,onMeasure中测量大小
                 break;
             default:
                 // 设置样式-填充

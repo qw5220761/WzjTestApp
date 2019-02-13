@@ -20,22 +20,6 @@
             android:orientation="horizontal"
             android:background="@drawable/bg_one_dimension_border">
 
-            <TextView
-                android:id="@+id/tvDriver1"
-                android:layout_width="5dp"
-                android:layout_height="5dp"
-                android:layout_gravity="center"
-                android:background="@color/blue"/>
-            <LinearLayout
-                android:id="@+id/layoutPoints"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_centerVertical="true">
-            </LinearLayout>
-
-
-
         </RelativeLayout>
     </com.example.drop.wzjtestapp.views.MyHorizontalScrollView>
 
@@ -51,7 +35,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="98dp"
             android:layout_marginTop="0dp"
-            android:text="向前" />
+            android:text="乘客前进" />
 
         <Button
             android:id="@+id/btnMoveBack"
@@ -61,7 +45,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="246dp"
             android:layout_marginTop="32dp"
-            android:text="向后" />
+            android:text="其他司机前进" />
 
         <Button
             android:id="@+id/btnScroll"
@@ -71,7 +55,7 @@
             android:layout_alignParentTop="true"
             android:layout_marginStart="178dp"
             android:layout_marginTop="98dp"
-            android:text="滚动" />
+            android:text="当前司机前进" />
     </RelativeLayout>
 
 </LinearLayout>
