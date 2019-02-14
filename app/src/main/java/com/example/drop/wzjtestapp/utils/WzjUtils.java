@@ -5,6 +5,9 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class WzjUtils {
     public static  int getScreenWidth(Context context){
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -32,5 +35,10 @@ public class WzjUtils {
         int screenHeight = (int) (height / density);// 屏幕高度(dp)
         return screenHeight;
     }
-
+    public static String getCurrentTime(){
+        SimpleDateFormat formatter   =   new SimpleDateFormat("yyyy年MM月dd日   HH:mm:ss");
+        Date curDate =  new Date(System.currentTimeMillis());
+        String time   =   formatter.format(curDate);
+        return time;
+    }
 }

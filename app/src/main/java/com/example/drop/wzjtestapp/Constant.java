@@ -51,6 +51,7 @@ public class Constant {
     public static final String GUIDE_PAGE = "guidePage";
     public static final String MEDIA_MP4_GIF = "mediaToMp4Gif";
     public static final String ONE_DIMENSION_MAP = "oneDimensionMap";
+    public static final String READ_TEXT = "readText";
 
 
     public final static int RESPONSE_SUCCESS_CODE = 100;

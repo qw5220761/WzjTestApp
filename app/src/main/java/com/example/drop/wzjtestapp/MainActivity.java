@@ -138,10 +138,15 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         mediaToMp4Gif.setTitle(Constant.MEDIA_MP4_GIF);
         list.add(mediaToMp4Gif);
         TestData oneDimensionMap = new TestData();
-        mediaToMp4Gif.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
-        mediaToMp4Gif.setName("一维地图");
-        mediaToMp4Gif.setTitle(Constant.ONE_DIMENSION_MAP);
+        oneDimensionMap.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        oneDimensionMap.setName("一维地图");
+        oneDimensionMap.setTitle(Constant.ONE_DIMENSION_MAP);
         list.add(oneDimensionMap);
+        TestData readText = new TestData();
+        readText.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        readText.setName("读取资源文件的文本");
+        readText.setTitle(Constant.READ_TEXT);
+        list.add(readText);
         adapter.setData(list);
     }
 

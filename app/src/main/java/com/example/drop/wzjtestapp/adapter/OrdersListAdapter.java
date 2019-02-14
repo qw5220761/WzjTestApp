@@ -102,6 +102,9 @@ public class OrdersListAdapter extends CommonWrapper<OrdersListAdapter.OrdersLis
                 if(bean.getTitle().equals(Constant.ONE_DIMENSION_MAP)){
                     mContext.startActivity(new Intent(mContext,OneDimensionMap.class));
                 }
+                if(bean.getTitle().equals(Constant.READ_TEXT)){
+                    mContext.startActivity(new Intent(mContext,OneDimensionMap.class));
+                }
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick();
                 }

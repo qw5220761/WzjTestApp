@@ -57,5 +57,9 @@
             android:layout_marginTop="98dp"
             android:text="当前司机前进" />
     </RelativeLayout>
-
+    <com.amap.api.maps.MapView
+        android:id="@+id/gaoDeMap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"/>
 </LinearLayout>
