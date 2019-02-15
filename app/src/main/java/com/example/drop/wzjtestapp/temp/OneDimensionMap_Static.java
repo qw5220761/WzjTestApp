@@ -27,8 +27,14 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.model.BitmapDescriptorFactory;
+import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
+import com.amap.api.maps.model.Marker;
+import com.amap.api.maps.model.MarkerOptions;
 import com.amap.api.maps.model.MyLocationStyle;
+import com.amap.api.maps.model.PolylineOptions;
+import com.amap.api.services.core.LatLonPoint;
 import com.example.drop.wzjtestapp.R;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
 import com.example.drop.wzjtestapp.utils.LogUtil;
@@ -46,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,9 +67,14 @@ public class OneDimensionMap_Static extends Activity {
     @BindView(R.id.btnMoveBack) Button btnMoveBack;
     @BindView(R.id.btnScroll) Button btnScroll;
     @BindView(R.id.gaoDeMap) MapView gaoDeMap;
+    @BindView(R.id.tvLatLng) TextView tvLatLng;
+    @BindView(R.id.btnPx) Button btnPx;
     private List<Points> pointsList;
     private int myPosition;
     private int marginStart = 80;//当前司机距离左边得距离
+    LatLng mCenterLatLonPoint = null;//中心点的位置
+    private AMap aMap;
+    private Marker orderMarker;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,14 +120,88 @@ public class OneDimensionMap_Static extends Activity {
             @Override
             public void onClick(View v) {
                 layoutMap.removeAllViews();
-                pointsList.get(myPosition).isMyPosition = false;
-                if (myPosition < pointsList.size() - 6) {
-                    myPosition = myPosition + 5;
+
+                if(myPosition<pointsList.size()-5){
+                    setMyPosition(myPosition+5);
                 }
-                pointsList.get(myPosition).isMyPosition = true;
+
                 initData();
             }
         });
+        //拼线
+        btnPx.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutMap.removeAllViews();
+                clearDriverAndPassengerData();
+                order();
+            }
+        });
+    }
+
+    //设置当前司机的位置
+    private void setMyPosition(int index){
+        pointsList.get(myPosition).isMyPosition = false;
+        myPosition = index;
+        pointsList.get(myPosition).isMyPosition = true;
+    }
+    //预约
+    private void order() {
+        List<Points> comparePointsList = new ArrayList<>();
+        if(mCenterLatLonPoint!=null){
+
+            for(int i=0;i<pointsList.size();i++){
+                Points points = pointsList.get(i);
+                float distance = AMapUtils.calculateLineDistance(new LatLng(points.lat,points.lng),mCenterLatLonPoint);
+                //小于500米的留下
+                if(distance<500){
+                    points.distance = distance;
+                    comparePointsList.add(points);
+                }
+            }
+
+            if(comparePointsList.size()>2){
+                //冒泡排序比较
+                for(int i=0;i<comparePointsList.size();i++){
+
+                    for(int j=0;j<comparePointsList.size()-1;j++){
+                        float temp1 = comparePointsList.get(j).distance;
+                        float temp2 = comparePointsList.get(j+1).distance;
+                        if(temp1>temp2){
+
+                            Points tempPoint = comparePointsList.get(j);
+                            comparePointsList.set(j,comparePointsList.get(j+1)) ;
+                            comparePointsList.set(j+1,tempPoint) ;
+                        }
+                    }
+
+                }
+            }else {
+                ToastUtil.showToast("距离太远，无法预约");
+                return;
+            }
+
+            //拿到映射到一维地图的点index
+            Points thePoint = comparePointsList.get(0);
+            //赋值
+            Passenger passenger = new Passenger();
+            passenger.passengerId = (int)comparePointsList.get(0).distance;
+            if(ArrayUtil.isEmpty(pointsList.get(thePoint.index).passengerList)){
+                pointsList.get(thePoint.index).passengerList = new ArrayList<>();
+            }
+            pointsList.get(thePoint.index).passengerList.add(passenger);
+
+            //显示乘客的映射位置
+            if(orderMarker!=null){
+                orderMarker.remove();
+            }
+            orderMarker = aMap.addMarker(new MarkerOptions().position(new LatLng(thePoint.lat,thePoint.lng)).title("映射的点").snippet("DefaultMarker"));
+
+            setMyPosition(thePoint.index);
+        }
+
+        notifySyncData();
+
     }
 
     @Override
@@ -227,6 +313,7 @@ public class OneDimensionMap_Static extends Activity {
     }
 
     private void createTestData() {
+        //读取轨迹文件
         readLine(this, "公交站点.txt");
         for (int i = 0; i < pointsList.size(); i++) {
             Points point = pointsList.get(i);
@@ -243,14 +330,14 @@ public class OneDimensionMap_Static extends Activity {
                 driverCarList.add(driverCar);
                 point.driverCarList = driverCarList;
             }
-            //装入乘客信息
-            if (i == 2 || ((i - 2) % 20) == 0 || i == 97) {
-                List<Passenger> passengerList = new ArrayList<>();
-                Passenger passenger = new Passenger();
-                passenger.passengerId = i;
-                passengerList.add(passenger);
-                point.passengerList = passengerList;
-            }
+//            //装入乘客信息
+//            if (i == 2 || ((i - 2) % 20) == 0 || i == 97) {
+//                List<Passenger> passengerList = new ArrayList<>();
+//                Passenger passenger = new Passenger();
+//                passenger.passengerId = i;
+//                passengerList.add(passenger);
+//                point.passengerList = passengerList;
+//            }
             //装入当前司机信息
             if (i == 8) {
                 point.isMyPosition = true;
@@ -263,6 +350,7 @@ public class OneDimensionMap_Static extends Activity {
         public int index;
         public double lat;
         public double lng;
+        public float distance;
         public String stationName;
         public boolean isMyPosition = false;
         public List<DriverCar> driverCarList;
@@ -286,8 +374,10 @@ public class OneDimensionMap_Static extends Activity {
         return (int) (dpValue * scale + 0.5f);
     }
 
+    private List<LatLng> latLngs;
     public void readLine(Context context, String fileName) {
         pointsList = new ArrayList<>();
+        latLngs = new ArrayList<LatLng>();
         InputStream inputStream = null;
         try {
             inputStream = context.getAssets().open(fileName);
@@ -309,6 +399,17 @@ public class OneDimensionMap_Static extends Activity {
         }
     }
 
+    private void clearDriverAndPassengerData(){
+        for (Points p:pointsList){
+            p.passengerList = null;
+            p.driverCarList = null;
+        }
+    }
+    private void notifySyncData(){
+
+        initData();
+    }
+    int index = 0;
     /**
      * 读取文本中的字符串
      *
@@ -327,13 +428,16 @@ public class OneDimensionMap_Static extends Activity {
 
             //逗号分割字符串
             String[] split = str.split(",");
-            String lat = split[0];
-            String lng = split[1];
+            String lng = split[0];
+            String lat = split[1];
             Points p = new Points();
+            p.index = index;
             p.lat = Double.parseDouble(lat);
             p.lng = Double.parseDouble(lng);
+            latLngs.add(new LatLng(p.lat,p.lng));
 
             pointsList.add(p);
+            index++;
         }
         return "";
     }
@@ -341,52 +445,38 @@ public class OneDimensionMap_Static extends Activity {
     private void initGaoDeMap(Bundle savedInstanceState) {
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         gaoDeMap.onCreate(savedInstanceState);
-        AMap aMap = gaoDeMap.getMap();
+         aMap= gaoDeMap.getMap();
 
         float distance = AMapUtils.calculateLineDistance(new LatLng(43.886993, 126.526241), new LatLng(43.861254, 126.633358));
         ToastUtil.showToast("距离是：" + distance);
-        aMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(43.886993, 126.526241), 12f));
 
-        AMapLocationClient mlocationClient;
-        AMapLocationClientOption mLocationOption = null;
-        mlocationClient = new AMapLocationClient(this);
-        //初始化定位参数
-        mLocationOption = new AMapLocationClientOption();
-        //设置定位监听
-        mlocationClient.setLocationListener(new AMapLocationListener() {
+
+        aMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
             @Override
-            public void onLocationChanged(AMapLocation amapLocation) {
-                if (amapLocation != null) {
-                    if (amapLocation.getErrorCode() == 0) {
-                        //定位成功回调信息，设置相关消息
-                        amapLocation.getLocationType();//获取当前定位结果来源，如网络定位结果，详见定位类型表
-                        amapLocation.getLatitude();//获取纬度
-                        amapLocation.getLongitude();//获取经度
-                        amapLocation.getAccuracy();//获取精度信息
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        Date date = new Date(amapLocation.getTime());
-                        df.format(date);//定位时间
-                        LogUtil.d(df.toString()+":"+amapLocation.getLatitude());
-                    } else {
-                        //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。
-                        Log.e("AmapError", "location Error, ErrCode:"
-                                + amapLocation.getErrorCode() + ", errInfo:"
-                                + amapLocation.getErrorInfo());
-                    }
-                }
+            public void onCameraChange(CameraPosition cameraPosition) {
+
+            }
+
+            @Override
+            public void onCameraChangeFinish(CameraPosition cameraPosition) {
+
+                mCenterLatLonPoint = new LatLng(cameraPosition.target.latitude, cameraPosition.target.longitude);
+                tvLatLng.setText(cameraPosition.target.latitude+","+cameraPosition.target.longitude);
             }
         });
-        //设置定位模式为高精度模式，Battery_Saving为低功耗模式，Device_Sensors是仅设备模式
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        //设置定位间隔,单位毫秒,默认为2000ms
-        mLocationOption.setInterval(2000);
-        //设置定位参数
-        mlocationClient.setLocationOption(mLocationOption);
-        // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
-        // 注意设置合适的定位时间的间隔（最小间隔支持为1000ms），并且在合适时间调用stopLocation()方法来取消定位请求
-        // 在定位结束后，在合适的生命周期调用onDestroy()方法
-        // 在单次定位情况下，定位无论成功与否，都无需调用stopLocation()方法移除请求，定位sdk内部会移除
-        //启动定位
-        mlocationClient.startLocation();
+        aMap.addPolyline(new PolylineOptions().
+                addAll(latLngs).width(10).color(Color.argb(255, 1, 1, 1)));
+
+        // 显示自己的位置自定义系统定位小蓝点
+        MyLocationStyle myLocationStyle = new MyLocationStyle();
+        myLocationStyle.myLocationIcon(BitmapDescriptorFactory.fromResource(R.drawable.gps_point));//
+        myLocationStyle.strokeColor(Color.argb(0, 0, 0, 0));// 设置圆形的边框颜色
+        myLocationStyle.radiusFillColor(Color.argb(0, 0, 0, 0));// 设置圆形的填充颜色
+        myLocationStyle.strokeWidth(0f);// 设置圆形的边框粗细
+        myLocationStyle.myLocationType(MyLocationStyle.LOCATION_TYPE_LOCATE);
+        aMap.setMyLocationEnabled(true);
+        aMap.setMyLocationStyle(myLocationStyle);
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(15));
+
     }
 }

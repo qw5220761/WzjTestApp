@@ -48,6 +48,16 @@
             android:text="其他司机前进" />
 
         <Button
+            android:id="@+id/btnPx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="94dp"
+            android:text="约线" />
+
+        <Button
             android:id="@+id/btnScroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,9 +67,29 @@
             android:layout_marginTop="98dp"
             android:text="当前司机前进" />
     </RelativeLayout>
-    <com.amap.api.maps.MapView
-        android:id="@+id/gaoDeMap"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+        <com.amap.api.maps.MapView
+            android:id="@+id/gaoDeMap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+        <ImageView
+            android:id="@+id/iv_point"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"
+            android:src="@mipmap/ic_map_point" />
+        <TextView
+            android:id="@+id/tvLatLng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+
 </LinearLayout>
