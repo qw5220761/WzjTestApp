@@ -61,8 +61,7 @@ import butterknife.ButterKnife;
  * 静态刷新的一维地图 用于网约公交车  2019-2-12
  */
 public class OneDimensionMap_Static extends Activity {
-    @BindView(R.id.layoutMap) RelativeLayout layoutMap;
-    @BindView(R.id.scrollMap) MyHorizontalScrollView scrollMap;
+    @BindView(R.id.scrollMap) BusMapView scrollMap;
     @BindView(R.id.btnMoveTo) Button btnMoveTo;
     @BindView(R.id.btnMoveBack) Button btnMoveBack;
     @BindView(R.id.btnScroll) Button btnScroll;
@@ -70,7 +69,7 @@ public class OneDimensionMap_Static extends Activity {
     @BindView(R.id.tvLatLng) TextView tvLatLng;
     @BindView(R.id.btnPx) Button btnPx;
     private List<Points> pointsList;
-    private int myPosition;
+    private int myPosition = 0;
     private int marginStart = 80;//当前司机距离左边得距离
     LatLng mCenterLatLonPoint = null;//中心点的位置
     private AMap aMap;
@@ -82,14 +81,13 @@ public class OneDimensionMap_Static extends Activity {
         setContentView(R.layout.activity_one_dimension_map_static);
         ButterKnife.bind(this);
         createTestData();
-        initData();
         initGaoDeMap(savedInstanceState);
+        scrollMap.notifySyncData(pointsList);
         //乘客前进
         btnMoveTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int currentIndex = -1;
-                layoutMap.removeAllViews();
 
                 //造一个乘客移动得假数据
                 for (int i = 0; i < pointsList.size(); i++) {
@@ -105,34 +103,30 @@ public class OneDimensionMap_Static extends Activity {
                         }
                     }
                 }
-                initData();
             }
         });
         //其它司机前进
         btnMoveBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layoutMap.removeAllViews();
             }
         });
         //当前司机前进
         btnScroll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layoutMap.removeAllViews();
 
                 if(myPosition<pointsList.size()-5){
                     setMyPosition(myPosition+5);
                 }
+                scrollMap.notifySyncData(pointsList);
 
-                initData();
             }
         });
         //拼线
         btnPx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                layoutMap.removeAllViews();
                 clearDriverAndPassengerData();
                 order();
             }
@@ -141,67 +135,32 @@ public class OneDimensionMap_Static extends Activity {
 
     //设置当前司机的位置
     private void setMyPosition(int index){
+
         pointsList.get(myPosition).isMyPosition = false;
         myPosition = index;
         pointsList.get(myPosition).isMyPosition = true;
     }
     //预约
     private void order() {
-        List<Points> comparePointsList = new ArrayList<>();
-        if(mCenterLatLonPoint!=null){
-
-            for(int i=0;i<pointsList.size();i++){
-                Points points = pointsList.get(i);
-                float distance = AMapUtils.calculateLineDistance(new LatLng(points.lat,points.lng),mCenterLatLonPoint);
-                //小于500米的留下
-                if(distance<500){
-                    points.distance = distance;
-                    comparePointsList.add(points);
-                }
-            }
-
-            if(comparePointsList.size()>2){
-                //冒泡排序比较
-                for(int i=0;i<comparePointsList.size();i++){
-
-                    for(int j=0;j<comparePointsList.size()-1;j++){
-                        float temp1 = comparePointsList.get(j).distance;
-                        float temp2 = comparePointsList.get(j+1).distance;
-                        if(temp1>temp2){
-
-                            Points tempPoint = comparePointsList.get(j);
-                            comparePointsList.set(j,comparePointsList.get(j+1)) ;
-                            comparePointsList.set(j+1,tempPoint) ;
-                        }
-                    }
-
-                }
-            }else {
-                ToastUtil.showToast("距离太远，无法预约");
+        if(mCenterLatLonPoint!=null) {
+            int index = scrollMap.latLngToPxPoint(mCenterLatLonPoint);
+            if(index == BusMapView.TRANSLATE_FAIL){
+                ToastUtil.showToast("一维地图映射失败");
                 return;
             }
-
-            //拿到映射到一维地图的点index
-            Points thePoint = comparePointsList.get(0);
             //赋值
-            Passenger passenger = new Passenger();
-            passenger.passengerId = (int)comparePointsList.get(0).distance;
-            if(ArrayUtil.isEmpty(pointsList.get(thePoint.index).passengerList)){
-                pointsList.get(thePoint.index).passengerList = new ArrayList<>();
+            OneDimensionMap_Static.Passenger passenger = new OneDimensionMap_Static.Passenger();
+            passenger.passengerId = index;
+            if (ArrayUtil.isEmpty(pointsList.get(index).passengerList)) {
+                pointsList.get(index).passengerList = new ArrayList<>();
             }
-            pointsList.get(thePoint.index).passengerList.add(passenger);
-
-            //显示乘客的映射位置
-            if(orderMarker!=null){
+            pointsList.get(index).passengerList.add(passenger);
+            scrollMap.notifySyncData(pointsList);
+            if(orderMarker !=null){
                 orderMarker.remove();
             }
-            orderMarker = aMap.addMarker(new MarkerOptions().position(new LatLng(thePoint.lat,thePoint.lng)).title("映射的点").snippet("DefaultMarker"));
-
-            setMyPosition(thePoint.index);
+            orderMarker = aMap.addMarker(new MarkerOptions().position(new LatLng(pointsList.get(index).lat,pointsList.get(index).lng)).title("映射位置").snippet("DefaultMarker"));
         }
-
-        notifySyncData();
-
     }
 
     @Override
@@ -223,99 +182,13 @@ public class OneDimensionMap_Static extends Activity {
         gaoDeMap.onDestroy();
     }
 
-    private void initData() {
-        LinearLayout layoutPoints = new LinearLayout(this);
-        RelativeLayout.LayoutParams pointParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        pointParams.addRule(RelativeLayout.CENTER_VERTICAL);
-        layoutPoints.setLayoutParams(pointParams);
-        layoutPoints.setOrientation(LinearLayout.HORIZONTAL);
-        layoutPoints.setBackgroundColor(Color.RED);
-        layoutMap.addView(layoutPoints);
 
-        //加载头部
-        PointView pointHead = new PointView(this);
-        LinearLayout.LayoutParams paramsHead = new LinearLayout.LayoutParams(dip2px(80), dip2px(10));
-        paramsHead.gravity = Gravity.CENTER;
-        pointHead.setLayoutParams(paramsHead);
-        pointHead.setBackgroundColor(Color.YELLOW);
-        pointHead.setViewType(-1);
-        layoutPoints.addView(pointHead);
-
-        for (int i = 0; i < pointsList.size(); i++) {
-            Points pointData = pointsList.get(i);
-            PointView point = new PointView(this);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dip2px(10), dip2px(10));
-            params.gravity = Gravity.CENTER;
-            point.setLayoutParams(params);
-            point.setBackgroundColor(Color.YELLOW);
-            layoutPoints.addView(point);
-
-            //加载站点信息
-            if (!TextUtils.isEmpty(pointData.stationName)) {
-                point.setViewType(2);
-                TextView tvStationName = new TextView(this);
-                tvStationName.setText("站点名称" + i);
-                tvStationName.setEms(1);
-                RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                param.setMarginStart(dip2px(10 * i + marginStart));
-                tvStationName.setLayoutParams(param);
-                layoutMap.addView(tvStationName);
-            }
-
-            //加载其他司机信息
-            if (!ArrayUtil.isEmpty(pointData.driverCarList)) {
-                PointView pointDriver = new PointView(this);
-                RelativeLayout.LayoutParams paramsDriver = new RelativeLayout.LayoutParams(dip2px(20), dip2px(20));
-                paramsDriver.setMarginStart(dip2px(10 * i + marginStart));
-                paramsDriver.topMargin = 20;
-                pointDriver.setLayoutParams(paramsDriver);
-                pointDriver.setBackground(getResources().getDrawable(R.mipmap.car));
-                pointDriver.setViewType(1);
-                layoutMap.addView(pointDriver);
-            }
-
-            //加载乘客信息
-            if (!ArrayUtil.isEmpty(pointData.passengerList)) {
-                PointView pointPassenger = new PointView(this);
-                RelativeLayout.LayoutParams paramsPassenger = new RelativeLayout.LayoutParams(dip2px(20), dip2px(20));
-                paramsPassenger.setMarginStart(dip2px(10 * i + marginStart));
-                paramsPassenger.bottomMargin = 20;
-                paramsPassenger.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                pointPassenger.setLayoutParams(paramsPassenger);
-                pointPassenger.setBackground(getResources().getDrawable(R.mipmap.people));
-                pointPassenger.setViewType(1);
-                layoutMap.addView(pointPassenger);
-            }
-
-            //加载当前司机信息
-            if (pointData.isMyPosition) {
-                myPosition = i;
-                point.setViewType(3);
-
-            }
-        }
-
-        //加载右边距得距离
-        PointView pointFoot = new PointView(this);
-        LinearLayout.LayoutParams paramsFoot = new LinearLayout.LayoutParams(dip2px(WzjUtils.getScreenWidth(this) - 80), dip2px(10));
-        paramsFoot.gravity = Gravity.CENTER;
-        pointFoot.setLayoutParams(paramsFoot);
-        pointFoot.setBackgroundColor(Color.YELLOW);
-        pointFoot.setViewType(-1);
-        layoutPoints.addView(pointFoot);
-
-        scrollMap.post(new Runnable() {
-            @Override
-            public void run() {
-                scrollMap.scrollTo(dip2px(myPosition * 10), 0);
-            }
-        });
-    }
 
     private void createTestData() {
         //读取轨迹文件
         readLine(this, "公交站点.txt");
         for (int i = 0; i < pointsList.size(); i++) {
+
             Points point = pointsList.get(i);
             //装入站点信息
             if (i == 2 || ((i - 2) % 20) == 0 || i == 97) {
@@ -330,19 +203,12 @@ public class OneDimensionMap_Static extends Activity {
                 driverCarList.add(driverCar);
                 point.driverCarList = driverCarList;
             }
-//            //装入乘客信息
-//            if (i == 2 || ((i - 2) % 20) == 0 || i == 97) {
-//                List<Passenger> passengerList = new ArrayList<>();
-//                Passenger passenger = new Passenger();
-//                passenger.passengerId = i;
-//                passengerList.add(passenger);
-//                point.passengerList = passengerList;
-//            }
-            //装入当前司机信息
-            if (i == 8) {
+            //设置我的位置
+            if(i==myPosition){
                 point.isMyPosition = true;
             }
         }
+
     }
 
 
@@ -364,7 +230,7 @@ public class OneDimensionMap_Static extends Activity {
 
     }
 
-    public class Passenger {
+    public static class Passenger {
         public int passengerId;
         public int latLng;
     }
@@ -404,10 +270,6 @@ public class OneDimensionMap_Static extends Activity {
             p.passengerList = null;
             p.driverCarList = null;
         }
-    }
-    private void notifySyncData(){
-
-        initData();
     }
     int index = 0;
     /**

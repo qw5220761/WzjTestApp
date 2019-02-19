@@ -8,6 +8,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 
+/**
+ * 带有动画方法得scrollview
+ */
 public class MyHorizontalScrollView  extends HorizontalScrollView {
 
     private View scrollContainer;
@@ -22,10 +25,6 @@ public class MyHorizontalScrollView  extends HorizontalScrollView {
 
     public MyHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-    }
-
-    public MyHorizontalScrollView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override
