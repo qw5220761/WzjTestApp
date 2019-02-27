@@ -18,6 +18,7 @@ import com.example.drop.wzjtestapp.database.bean.TestData;
 import com.example.drop.wzjtestapp.guide_page.GuidePageActivity;
 import com.example.drop.wzjtestapp.mediaplayer.GifOrMp4PlayerActivity;
 import com.example.drop.wzjtestapp.temp.OneDimensionMap;
+import com.example.drop.wzjtestapp.update.UpdateActivity;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
 import com.example.drop.wzjtestapp.utils.LogUtil;
 import com.example.drop.wzjtestapp.views.calendar.DatePickerActivity;
@@ -104,6 +105,9 @@ public class OrdersListAdapter extends CommonWrapper<OrdersListAdapter.OrdersLis
                 }
                 if(bean.getTitle().equals(Constant.READ_TEXT)){
                     mContext.startActivity(new Intent(mContext,OneDimensionMap.class));
+                }
+                if(bean.getTitle().equals(Constant.UPDATE)){
+                    mContext.startActivity(new Intent(mContext,UpdateActivity.class));
                 }
                 if (onItemClickListener != null) {
                     onItemClickListener.onItemClick();

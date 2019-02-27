@@ -103,6 +103,7 @@ public class OneDimensionMap_Static extends Activity {
                         }
                     }
                 }
+                scrollMap.notifySyncData(pointsList);
             }
         });
         //其它司机前进
@@ -155,11 +156,13 @@ public class OneDimensionMap_Static extends Activity {
                 pointsList.get(index).passengerList = new ArrayList<>();
             }
             pointsList.get(index).passengerList.add(passenger);
+            setMyPosition(index);
             scrollMap.notifySyncData(pointsList);
             if(orderMarker !=null){
                 orderMarker.remove();
             }
             orderMarker = aMap.addMarker(new MarkerOptions().position(new LatLng(pointsList.get(index).lat,pointsList.get(index).lng)).title("映射位置").snippet("DefaultMarker"));
+
         }
     }
 

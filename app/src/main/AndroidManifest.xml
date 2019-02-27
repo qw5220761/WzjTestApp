@@ -9,6 +9,7 @@
     <uses-permission android:name="android.peurmission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <!--允许程序读写手机状态和身份-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -43,6 +44,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
         <activity android:name=".MainActivity">
+
         </activity>
         <activity android:name=".views.calendar.DatePickerActivity" />
         <activity android:name=".views.other.WaveViewActivity" />
@@ -50,12 +52,18 @@
         <activity android:name=".mediaplayer.GifOrMp4PlayerActivity" />
         <activity android:name=".temp.OneDimensionMap">
         </activity>
-        <activity android:name=".temp.OneDimensionMap_Static">
+        <activity android:name=".update.UpdateActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <service
+            android:name=".update.UpdateIntentService"
+            android:exported="false"/>
+        <activity android:name=".temp.OneDimensionMap_Static">
+
         </activity>
         <service android:name="com.amap.api.location.APSService"></service>
         <meta-data

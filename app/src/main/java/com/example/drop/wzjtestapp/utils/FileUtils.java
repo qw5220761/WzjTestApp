@@ -2,7 +2,10 @@ package com.example.drop.wzjtestapp.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.example.drop.wzjtestapp.MyApplication;
@@ -600,5 +603,22 @@ public class FileUtils {
 //        file.mkdirs();// 创建文件夹
 //        fileName = pathUrl + imageName;
 		return fileName;
+	}
+	public static Uri getUriForFile(Context context, File file) {
+		if (context == null || file == null) {
+			throw new NullPointerException();
+		}
+		Uri uri;
+		if (Build.VERSION.SDK_INT >= 24) {
+//            uri = FileProvider.getUriForFile(context.getApplicationContext(), "com.freekeer.freekeer.FileProvider", file);
+			uri = FileProvider.getUriForFile(context.getApplicationContext(), context.getPackageName(), file);
+		} else {
+			uri = Uri.fromFile(file);
+		}
+		return uri;
+	}
+
+	public static File getDiskCacheDir(Context context, String uniqueName) {
+		return new File(context.getExternalCacheDir() + File.separator + uniqueName);
 	}
 }
