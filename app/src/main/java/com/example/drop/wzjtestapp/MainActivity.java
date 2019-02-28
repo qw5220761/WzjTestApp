@@ -148,9 +148,9 @@ public class MainActivity extends BaseActivity  implements LoadMoreWrapper.OnLoa
         readText.setTitle(Constant.READ_TEXT);
         list.add(readText);
         TestData update = new TestData();
-        readText.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
-        readText.setName("软件更新");
-        readText.setTitle(Constant.UPDATE);
+        update.setImage("http://imgsrc.baidu.com/imgad/pic/item/e850352ac65c103801e7ffecb9119313b07e8906.jpg");
+        update.setName("软件更新");
+        update.setTitle(Constant.UPDATE);
         list.add(update);
         adapter.setData(list);
     }

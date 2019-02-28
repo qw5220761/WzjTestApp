@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
@@ -62,65 +63,57 @@ import butterknife.ButterKnife;
  */
 public class OneDimensionMap_Static extends Activity {
     @BindView(R.id.scrollMap) BusMapView scrollMap;
-    @BindView(R.id.btnMoveTo) Button btnMoveTo;
-    @BindView(R.id.btnMoveBack) Button btnMoveBack;
-    @BindView(R.id.btnScroll) Button btnScroll;
+    @BindView(R.id.btnSetPassenger) Button btnSetPassenger;
+    @BindView(R.id.btnSetDriver) Button btnSetDriver;
+    @BindView(R.id.btnMyPosition) Button btnMyPosition;
     @BindView(R.id.gaoDeMap) MapView gaoDeMap;
     @BindView(R.id.tvLatLng) TextView tvLatLng;
     @BindView(R.id.btnPx) Button btnPx;
-    private List<Points> pointsList;
+
     private int myPosition = 0;
     private int marginStart = 80;//当前司机距离左边得距离
     LatLng mCenterLatLonPoint = null;//中心点的位置
     private AMap aMap;
     private Marker orderMarker;
+    List<BusMapView.DriverCar> driverCarList;
+    List<BusMapView.Passenger> passengerList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_one_dimension_map_static);
         ButterKnife.bind(this);
-        createTestData();
+        scrollMap.initMap(createTestData());
         initGaoDeMap(savedInstanceState);
-        scrollMap.notifySyncData(pointsList);
-        //乘客前进
-        btnMoveTo.setOnClickListener(new View.OnClickListener() {
+        //设置乘客
+        btnSetPassenger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentIndex = -1;
-
-                //造一个乘客移动得假数据
-                for (int i = 0; i < pointsList.size(); i++) {
-                    if (!ArrayUtil.isEmpty(pointsList.get(i).passengerList)) {
-                        if (i < pointsList.size() - 10 && currentIndex != i) {
-                            pointsList.get(i).passengerList = null;
-                            currentIndex = i + 5;
-                            Passenger passenger = new Passenger();
-                            passenger.passengerId = i;
-                            List<Passenger> passengerList = new ArrayList<>();
-                            passengerList.add(passenger);
-                            pointsList.get(currentIndex).passengerList = passengerList;
-                        }
-                    }
-                }
-                scrollMap.notifySyncData(pointsList);
+                passengerList = new ArrayList<>();
+                BusMapView.Passenger passenger = new BusMapView.Passenger();
+                passenger.latLng = mCenterLatLonPoint;
+                passengerList.add(passenger);
+                scrollMap.setPassengerPosition(passengerList);
             }
         });
-        //其它司机前进
-        btnMoveBack.setOnClickListener(new View.OnClickListener() {
+        //设置司机
+        btnSetDriver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                driverCarList = new ArrayList<>();
+                BusMapView.DriverCar driverCar = new BusMapView.DriverCar();
+                driverCar.latLng = mCenterLatLonPoint;
+                driverCar.driverName = "001";
+                driverCarList.add(driverCar);
+                scrollMap.setDriverPosition(driverCarList);
             }
         });
-        //当前司机前进
-        btnScroll.setOnClickListener(new View.OnClickListener() {
+        //设置当前位置
+        btnMyPosition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if(myPosition<pointsList.size()-5){
-                    setMyPosition(myPosition+5);
-                }
-                scrollMap.notifySyncData(pointsList);
+                scrollMap.setMyPosition(mCenterLatLonPoint);
 
             }
         });
@@ -128,19 +121,11 @@ public class OneDimensionMap_Static extends Activity {
         btnPx.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearDriverAndPassengerData();
                 order();
             }
         });
     }
 
-    //设置当前司机的位置
-    private void setMyPosition(int index){
-
-        pointsList.get(myPosition).isMyPosition = false;
-        myPosition = index;
-        pointsList.get(myPosition).isMyPosition = true;
-    }
     //预约
     private void order() {
         if(mCenterLatLonPoint!=null) {
@@ -150,14 +135,12 @@ public class OneDimensionMap_Static extends Activity {
                 return;
             }
             //赋值
-            OneDimensionMap_Static.Passenger passenger = new OneDimensionMap_Static.Passenger();
+            BusMapView.Passenger passenger = new BusMapView.Passenger();
             passenger.passengerId = index;
             if (ArrayUtil.isEmpty(pointsList.get(index).passengerList)) {
                 pointsList.get(index).passengerList = new ArrayList<>();
             }
             pointsList.get(index).passengerList.add(passenger);
-            setMyPosition(index);
-            scrollMap.notifySyncData(pointsList);
             if(orderMarker !=null){
                 orderMarker.remove();
             }
@@ -185,62 +168,20 @@ public class OneDimensionMap_Static extends Activity {
         gaoDeMap.onDestroy();
     }
 
+    private List<BusMapView.Points> pointsList;
+    private String createTestData() {
 
-
-    private void createTestData() {
         //读取轨迹文件
         readLine(this, "公交站点.txt");
         for (int i = 0; i < pointsList.size(); i++) {
 
-            Points point = pointsList.get(i);
+            BusMapView.Points point = pointsList.get(i);
             //装入站点信息
             if (i == 2 || ((i - 2) % 20) == 0 || i == 97) {
                 point.stationName = "站点" + i;
             }
-            //装入其他司机信息
-            if (i == 10 || i == 40 || i == 60) {
-                List<DriverCar> driverCarList = new ArrayList<>();
-                DriverCar driverCar = new DriverCar();
-                driverCar.driverId = i;
-                driverCar.driverName = "0" + i;
-                driverCarList.add(driverCar);
-                point.driverCarList = driverCarList;
-            }
-            //设置我的位置
-            if(i==myPosition){
-                point.isMyPosition = true;
-            }
         }
-
-    }
-
-
-    public class Points {
-        public int index;
-        public double lat;
-        public double lng;
-        public float distance;
-        public String stationName;
-        public boolean isMyPosition = false;
-        public List<DriverCar> driverCarList;
-        public List<Passenger> passengerList;
-    }
-
-    public class DriverCar {
-        public int driverId;
-        public int latLng;
-        public String driverName;
-
-    }
-
-    public static class Passenger {
-        public int passengerId;
-        public int latLng;
-    }
-
-    public int dip2px(float dpValue) {
-        final float scale = getResources().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
+        return JSON.toJSONString(pointsList);
     }
 
     private List<LatLng> latLngs;
@@ -266,14 +207,10 @@ public class OneDimensionMap_Static extends Activity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
-    private void clearDriverAndPassengerData(){
-        for (Points p:pointsList){
-            p.passengerList = null;
-            p.driverCarList = null;
-        }
-    }
+
     int index = 0;
     /**
      * 读取文本中的字符串
@@ -295,7 +232,7 @@ public class OneDimensionMap_Static extends Activity {
             String[] split = str.split(",");
             String lng = split[0];
             String lat = split[1];
-            Points p = new Points();
+            BusMapView.Points p = new BusMapView.Points();
             p.index = index;
             p.lat = Double.parseDouble(lat);
             p.lng = Double.parseDouble(lng);
@@ -311,10 +248,6 @@ public class OneDimensionMap_Static extends Activity {
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         gaoDeMap.onCreate(savedInstanceState);
          aMap= gaoDeMap.getMap();
-
-        float distance = AMapUtils.calculateLineDistance(new LatLng(43.886993, 126.526241), new LatLng(43.861254, 126.633358));
-        ToastUtil.showToast("距离是：" + distance);
-
 
         aMap.setOnCameraChangeListener(new AMap.OnCameraChangeListener() {
             @Override

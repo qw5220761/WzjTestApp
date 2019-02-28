@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,26 +17,28 @@ import android.widget.TextView;
 
 import com.amap.api.maps.AMapUtils;
 import com.amap.api.maps.model.LatLng;
-import com.amap.api.maps.model.MarkerOptions;
 import com.example.drop.wzjtestapp.R;
 import com.example.drop.wzjtestapp.utils.ArrayUtil;
-import com.example.drop.wzjtestapp.utils.ToastUtil;
 import com.example.drop.wzjtestapp.utils.WzjUtils;
-import com.example.drop.wzjtestapp.views.MyHorizontalScrollView;
 import com.example.drop.wzjtestapp.views.temp.PointView;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.zip.Inflater;
 
 public class BusMapView extends HorizontalScrollView {
     public static int TRANSLATE_FAIL = -1;//坐标转换失败
     private int myPosition = -1;//显示地图位置得坐标
-    private List<OneDimensionMap_Static.Points> pointsList;
+    private List<Points> pointsList;
     private RelativeLayout layoutMap;
     private Context mContext;
-    private int defaultPosition = 8;//当前位置得index
-    private int itemWith = 10;//每个点得距离
+    private  int defaultPosition = 8;//当前位置得默认距离屏幕几个格子
+    private  int itemWith = 10;//每个点得距离
+    private   int searchScope = 500;//搜索范围
+    private final static int NO_POSITION = -1;//匹配点失败
+
 
     public BusMapView(Context context) {
         this(context, null);
@@ -53,17 +56,9 @@ public class BusMapView extends HorizontalScrollView {
     }
 
     /**
-     * @param pointsList 地图列表
-     */
-    public void notifySyncData(List<OneDimensionMap_Static.Points> pointsList) {
-        this.pointsList = pointsList;
-        notifySyncData();
-    }
-
-    /**
      * 更新拼线地图
      */
-    public void notifySyncData() {
+    private void notifySyncData() {
 
         int marginStart = defaultPosition * itemWith;
         //清空所有得view
@@ -89,7 +84,7 @@ public class BusMapView extends HorizontalScrollView {
 
         //加载坐标点信息
         for (int i = 0; i < pointsList.size(); i++) {
-            OneDimensionMap_Static.Points pointData = pointsList.get(i);
+            Points pointData = pointsList.get(i);
             PointView point = new PointView(mContext);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dip2px(10), dip2px(10));
             params.gravity = Gravity.CENTER;
@@ -114,11 +109,20 @@ public class BusMapView extends HorizontalScrollView {
                 PointView pointDriver = new PointView(mContext);
                 RelativeLayout.LayoutParams paramsDriver = new RelativeLayout.LayoutParams(dip2px(20), dip2px(20));
                 paramsDriver.setMarginStart(dip2px(itemWith * i + marginStart));
-                paramsDriver.topMargin = 20;
+                paramsDriver.topMargin = 30;
                 pointDriver.setLayoutParams(paramsDriver);
                 pointDriver.setBackground(getResources().getDrawable(R.mipmap.car));
                 pointDriver.setViewType(1);
                 layoutMap.addView(pointDriver);
+
+                TextView tvDriverName = new TextView(mContext);
+                tvDriverName.setText(pointData.driverCarList.get(0).driverName);
+                RelativeLayout.LayoutParams paramsDriverText = new RelativeLayout.LayoutParams(dip2px(20), dip2px(20));
+                paramsDriverText.setMarginStart(dip2px(itemWith * i + marginStart));
+                paramsDriverText.topMargin = 10;
+                tvDriverName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 8);
+                tvDriverName.setLayoutParams(paramsDriverText);
+                layoutMap.addView(tvDriverName);
             }
 
             //加载乘客信息
@@ -161,17 +165,30 @@ public class BusMapView extends HorizontalScrollView {
     }
 
     /**
+     * 加载站点信息
+     * @param jsonStr 站点信息的json字符串
+     */
+    public void initMap(String jsonStr){
+
+        Gson gson = new Gson();
+        Points[] points = gson.fromJson(jsonStr,Points[].class);
+        pointsList = Arrays.asList(points);
+        notifySyncData();
+
+    }
+
+    /**
      * 地图坐标转换成一维坐标
      *
      * @return 一维坐标对应得index   TRANSLATE_FAIL(-1)表示转换失败
      */
     public int latLngToPxPoint(LatLng latLng) {
         int index = -1;//映射得点
-        List<OneDimensionMap_Static.Points> comparePointsList = new ArrayList<>();
+        List<Points> comparePointsList = new ArrayList<>();
         if (latLng != null) {
 
             for (int i = 0; i < pointsList.size(); i++) {
-                OneDimensionMap_Static.Points points = pointsList.get(i);
+                Points points = pointsList.get(i);
                 float distance = AMapUtils.calculateLineDistance(new LatLng(points.lat, points.lng), latLng);
                 //小于500米的留下
                 if (distance < 500) {
@@ -189,7 +206,7 @@ public class BusMapView extends HorizontalScrollView {
                         float temp2 = comparePointsList.get(j + 1).distance;
                         if (temp1 > temp2) {
 
-                            OneDimensionMap_Static.Points tempPoint = comparePointsList.get(j);
+                            Points tempPoint = comparePointsList.get(j);
                             comparePointsList.set(j, comparePointsList.get(j + 1));
                             comparePointsList.set(j + 1, tempPoint);
                         }
@@ -199,7 +216,7 @@ public class BusMapView extends HorizontalScrollView {
             }else if(comparePointsList.size() == 1){
                 index = comparePointsList.get(0).index;
             } else {
-                return -1;
+                return NO_POSITION;
             }
 
         }
@@ -207,15 +224,62 @@ public class BusMapView extends HorizontalScrollView {
 
     }
 
+    /**
+     * 设置乘客坐标
+     * @param passengerList 司机列表
+     */
+    public void setPassengerPosition(List<Passenger> passengerList){
+        for (Points p:pointsList){
+            p.passengerList = null;
+        }
+        for(Passenger passenger:passengerList ){
+            int index = latLngToPxPoint(passenger.latLng);
+            if(index != NO_POSITION){
+                Points p = pointsList.get(index);
+                List<Passenger> currentPassengerList = p.passengerList;
+                if(ArrayUtil.isEmpty(currentPassengerList)){
+                    currentPassengerList = new ArrayList<>();
+                }
+                currentPassengerList.add(passenger);
+                p.passengerList = currentPassengerList;
+                pointsList.set(index,p);
+            }
+        }
+        notifySyncData();
+    }
 
     /**
-     * 设置显示得位置
+     * 设置司机坐标
+     * @param driverCarList 乘客列表
+     */
+    public void setDriverPosition(List<DriverCar> driverCarList){
+//        for (Points p:pointsList){
+//            p.driverCarList = null;
+//        }
+        for(DriverCar driverCar:driverCarList){
+            int index = latLngToPxPoint(driverCar.latLng);
+            if(index != NO_POSITION){
+                Points p = pointsList.get(index);
+                List<DriverCar> currentDriverCarList = p.driverCarList;
+                if(ArrayUtil.isEmpty(currentDriverCarList)){
+                    currentDriverCarList = new ArrayList<>();
+                }
+                currentDriverCarList.add(driverCar);
+                p.driverCarList = currentDriverCarList;
+                pointsList.set(index,p);
+            }
+        }
+        notifySyncData();
+    }
+
+    /**
+     * 设置我的得位置
      *
      * @param latLng
      */
     public void setMyPosition(LatLng latLng) {
         int index = latLngToPxPoint(latLng);
-        if (myPosition != -1) {
+        if (myPosition != NO_POSITION) {
             pointsList.get(myPosition).isMyPosition = false;
         }
         myPosition = index;
@@ -227,4 +291,54 @@ public class BusMapView extends HorizontalScrollView {
         final float scale = getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
+
+    /**
+     * 默认当前位置距离屏幕几个格子
+     * @param position 格子数
+     * @return
+     */
+    public void setDefaultPosition(int position){
+        defaultPosition = position;
+    }
+
+    /**
+     * 每个格子的宽度
+     * @param with 宽度
+     * @return
+     */
+    public void setItemWith(int with){
+        itemWith = with;
+    }
+
+    /**
+     * 搜索范围
+     * @param scope 搜索范围（米）
+     * @return
+     */
+    public void setSearchScope(int scope){
+        searchScope = scope;
+    }
+    public static class Points {
+        public int index;
+        public double lat;
+        public double lng;
+        public float distance;
+        public String stationName;
+        public boolean isMyPosition = false;
+        public List<DriverCar> driverCarList;
+        public List<Passenger> passengerList;
+    }
+
+    public static class  DriverCar {
+        public int driverId;
+        public LatLng latLng;
+        public String driverName;
+
+    }
+
+    public static class Passenger {
+        public int passengerId;
+        public LatLng latLng;
+    }
+
 }

@@ -53,17 +53,17 @@
         <activity android:name=".temp.OneDimensionMap">
         </activity>
         <activity android:name=".update.UpdateActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <service
             android:name=".update.UpdateIntentService"
             android:exported="false"/>
         <activity android:name=".temp.OneDimensionMap_Static">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <service android:name="com.amap.api.location.APSService"></service>
         <meta-data
