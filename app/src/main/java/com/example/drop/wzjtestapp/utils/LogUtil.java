@@ -27,6 +27,9 @@ public final class LogUtil {
             android.util.Log.i(TAG, toString(objects));
         }
     }
+    public static void showLog(String str){
+        d("aaa",str);
+    }
 
     public static void i(String tag, Object... objects) {
         if (isLoggable(INFO)) {

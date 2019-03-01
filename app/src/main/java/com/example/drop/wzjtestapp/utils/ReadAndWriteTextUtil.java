@@ -46,17 +46,17 @@ public class ReadAndWriteTextUtil {
         return sb.toString();
     }
 
-    private String getFilePath() {
+    public static String getFilePath(String filrDir) {
         String file_dir = "";
         // SD卡是否存在
         boolean isSDCardExist = Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
         // Environment.getExternalStorageDirectory()相当于File file=new File("/sdcard")
         boolean isRootDirExist = Environment.getExternalStorageDirectory().exists();
         if (isSDCardExist && isRootDirExist) {
-            file_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/txt/";
+            file_dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/"+filrDir+"/";
         } else {
             // MyApplication.getInstance().getFilesDir()返回的路劲为/data/data/PACKAGE_NAME/files，其中的包就是我们建立的主Activity所在的包
-            file_dir = MyApplication.getApplication().getFilesDir().getAbsolutePath() + "/txt/";
+            file_dir = MyApplication.getApplication().getFilesDir().getAbsolutePath() + "/"+filrDir+"/";
         }
         return file_dir;
     }
@@ -83,11 +83,11 @@ public class ReadAndWriteTextUtil {
     public void savePackageFile() {
 
         try {
-            writeFile = new File(getFilePath()  );
+            writeFile = new File(getFilePath("txt")  );
             if (!writeFile.exists()) {
                 writeFile.mkdir();
             }
-            File file = new File(getFilePath()  , "myTestWrite.txt");
+            File file = new File(getFilePath("txt")  , "myTestWrite.txt");
             file.createNewFile();
             Log.e("","文件创建成功");
         }catch (Exception e){

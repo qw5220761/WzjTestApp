@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -18,6 +19,8 @@ import android.widget.RemoteViews;
 import com.example.drop.wzjtestapp.MyApplication;
 import com.example.drop.wzjtestapp.R;
 import com.example.drop.wzjtestapp.utils.FileUtils;
+import com.example.drop.wzjtestapp.utils.LogUtil;
+import com.example.drop.wzjtestapp.utils.ReadAndWriteTextUtil;
 import com.example.drop.wzjtestapp.utils.WzjUtils;
 
 import java.io.File;
@@ -100,7 +103,28 @@ public class UpdateIntentService extends IntentService {
 
 
     private File updateIo(Intent intent) {
-        File updateFile = FileUtils.getDiskCacheDir(getApplicationContext(), intent.getStringExtra("name") + System.currentTimeMillis() + ".apk");
+        ///storage/emulated/0/Android/data/com.example.drop.wzjtestapp/cache/null1551339347707.apk
+//        File updateFile = FileUtils.getDiskCacheDir(getApplicationContext(), );
+        File updateDir = new File(  ReadAndWriteTextUtil.getFilePath("alocation"));
+        if(!updateDir.exists()){
+            boolean b = updateDir.mkdirs();
+            if(!b){
+                if(updateDir.exists()) {
+                    LogUtil.showLog("删除文件目录！！！");
+                    updateDir.delete();
+                }
+                LogUtil.showLog("创建目录失败");
+            }
+        }
+
+        File updateFile = new File(ReadAndWriteTextUtil.getFilePath("alocation")  , "abc" + ".apk");
+        try {
+            updateFile.createNewFile();
+        }catch (Exception e){
+//            updateFile = FileUtils.getDiskCacheDir(getApplicationContext(), intent.getStringExtra("appName") + System.currentTimeMillis() + ".apk");
+            e.printStackTrace();
+        }
+
         try {
             URL url = new URL(intent.getStringExtra("downUrl"));
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -236,6 +260,5 @@ public class UpdateIntentService extends IntentService {
         }
         return type;
     }
-
 
 }
